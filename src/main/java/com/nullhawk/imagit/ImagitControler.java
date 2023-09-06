@@ -12,16 +12,13 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
-interface Action {
-    void apply(); // Apply the action to the image
-    void undo();  // Undo the action on the image
-    void redo();  // Redo the action on the image
-}
 
 public class ImagitControler extends Application {
 
+    public static File selectedFile;
+    public static File tempFile = new File("temp.jpg");;
     @FXML
-    private HBox photoViewer;
+    public  HBox photoViewer;
     @FXML
     private Slider exposureSlide;
     @FXML
@@ -36,8 +33,6 @@ public class ImagitControler extends Application {
     private VBox controlPanel;
 
     public static BufferedImage BF_Image;
-    private File selectedFile;
-    private  File tempFile = new File("temp.jpg");
     public static Image fxImage;
     Editor edit = new Editor();
 
@@ -45,16 +40,21 @@ public class ImagitControler extends Application {
     private Stack<BufferedImage> redoStack = new Stack<BufferedImage>();
     private int lastExposure = 0, lastShadow = 0, lastHighlight = 0, lastRotate = 0;
     float lastContrast = 0;
-    private boolean firstCommand = true ,isImageLoading =true;
+    public static boolean firstCommand = true ;
 
 
+    public static void setPhoto(BufferedImage bf, Image img){
+        BF_Image = bf;
+        fxImage = img;
+
+    }
     @FXML
     void crop(MouseEvent event) {
 
     }
 
     @FXML
-    void filter(MouseEvent event) throws IOException {
+    void filter(MouseEvent event) throws Exception {
         Filter filter = new Filter();
         Stage newStage = new Stage();
         filter.start(newStage);
@@ -294,21 +294,15 @@ public class ImagitControler extends Application {
     }
     void setImage(){
         ImageView imageView = new ImageView();
-        imageView.setImage(this.fxImage);
+        imageView.setImage(fxImage);
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(600);
         imageView.setFitHeight(600);
 
         // Set the ImageView as the background content of the ScrollPane\ // Clear default background
-        if (this.photoViewer != null) {
-            this.photoViewer.getChildren().clear();
-            this.photoViewer.getChildren().add(imageView);
+            photoViewer.getChildren().clear();
+            photoViewer.getChildren().add(imageView);
 
-
-
-        } else {
-            System.out.println("ScrollPane is null, cannot set style.");
-        }
 //                int width = (int) fxImage.getWidth();
 //                int height = (int) fxImage.getHeight();
 //                WritableImage copiedImage = new WritableImage(width, height);
